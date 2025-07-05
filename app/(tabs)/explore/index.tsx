@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions, TextInput, Keyboard, ActivityIndicator, Modal  } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import {  Star, Search, SlidersHorizontal, X, ChefHat, ChevronDown, Check } from 'lucide-react-native';
-import { bucketUrl } from "../../../constants"
-//import { BannerAd, BannerAdSize, TestIds, InterstitialAd, AdEventType, RewardedInterstitialAd, RewardedAdEventType } from 'react-native-google-mobile-ads';
+import { Check, ChefHat, ChevronDown, Search, SlidersHorizontal, Star, X } from 'lucide-react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Dimensions, Image, Keyboard, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { bucketUrl } from "../../../constants";
+
 
 
 const { width } = Dimensions.get('window');
@@ -186,6 +188,20 @@ export default function ExploreScreen() {
     </TouchableOpacity>
   );
 
+    const renderBanner = (recipe) => (
+      <>
+      {renderRecipeCard(recipe)}
+      <BannerAd
+        unitId={TestIds.BANNER}
+        size={BannerAdSize.BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true
+        }}
+      />
+  </>
+      
+    )
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
@@ -242,17 +258,15 @@ export default function ExploreScreen() {
         scrollEventThrottle={400}>
 
           <View style={styles.section}>
-            {/* <BannerAd 
-              unitId={TestIds.BANNER}
-              size={BannerAdSize.LARGE_BANNER}
-              requestOptions={{
-                requestNonPersonalizedAdsOnly: true
-              }}
-            /> */}
             <View style={styles.collectionsGrid}>           
-              {data.map((collection) => (
-                renderRecipeCard(collection)
-              ))}
+              {data.map((collection,index) => {
+                if((index +1) % 6 == 0){
+                  return renderBanner(collection); 
+                  
+                } else {
+                  return renderRecipeCard(collection)
+                }
+              })}
               {loading && (
                 <View style={styles.loader}>
                   <ActivityIndicator size="large" color={"#f97316"} />

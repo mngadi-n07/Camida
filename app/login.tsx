@@ -161,7 +161,7 @@ export default function LoginScreen() {
 
           <TouchableOpacity 
             style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
-            onPress={handleGoogleSignIn}
+            onPress={handleLogin}
             disabled={isLoading}
           >
             {isLoading ? (

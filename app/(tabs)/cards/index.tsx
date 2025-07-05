@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Plus, Trash2 } from 'lucide-react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import React from 'react';
-import {shops} from '../../../constants';
+import { Plus, Trash2 } from 'lucide-react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { shops } from '../../../constants';
 
 
 interface LoyaltyCard {
@@ -135,8 +135,21 @@ export default function CardsScreen() {
           <Plus size={24} color="#fff" />
         </TouchableOpacity>
       </View>
-      <View
-      >
+
+      <View style={styles.adContainer}>
+        <BannerAd
+        unitId={TestIds.BANNER}
+        size={BannerAdSize.BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly : true
+        }}
+      />
+
+      </View>
+        
+      
+
+
       <FlatList
         data={cards}
         renderItem={renderCard2}
@@ -145,7 +158,7 @@ export default function CardsScreen() {
         showsVerticalScrollIndicator={false}
       />
 
-      </View>
+      
 
       <Modal
         visible={showDeleteModal}
@@ -205,6 +218,9 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
     padding: 5,
+  },
+  adContainer: {
+    alignItems: 'center', // center horizontally
   },
   header: {
     flexDirection: 'row',
@@ -282,6 +298,7 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
+    paddingBottom: 0,
   },
   card: {
     backgroundColor: '#fff',

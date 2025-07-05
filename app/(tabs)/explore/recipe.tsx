@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator,  Alert, ScrollView, TouchableOpacity, Image, Modal } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ArrowLeft, Clock, Heart, ListPlus, Check, Star } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { bucketUrl } from "../../../constants"
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ArrowLeft, Check, Clock, Heart, ListPlus, Star } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { bucketUrl } from "../../../constants";
 
 
 const RECIPE_URL = "https://y37s25brcj.execute-api.eu-north-1.amazonaws.com/default/recipe";
@@ -199,6 +200,13 @@ export default function RecipeScreen() {
                   </View>
                 ))}
               </View>
+              <BannerAd
+                unitId={TestIds.BANNER}
+                size={BannerAdSize.BANNER}
+                requestOptions={{
+                  requestNonPersonalizedAdsOnly: true
+                }}
+              />
     
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Instructions</Text>
