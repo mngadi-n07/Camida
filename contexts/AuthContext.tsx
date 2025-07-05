@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as SecureStore from 'expo-secure-store';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 
 interface User {
@@ -96,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (Platform.OS === 'web') {
         localStorage.removeItem(AUTH_KEY);
       } else {
+        await GoogleSignin.signOut();
         await SecureStore.deleteItemAsync(AUTH_KEY);
       }
       setUser(null);

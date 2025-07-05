@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mngadi.n07.Camida",
+      "bundleIdentifier": "za.co.Camida",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -21,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.mngadi.n07.Camida"
+      "package": "za.co.Camida"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +37,12 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.340030532252-55ml5mb92msic7i8mlrd25gkpjndef7i"
         }
       ]
     ],

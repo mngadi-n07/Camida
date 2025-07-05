@@ -1,8 +1,9 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { GoogleSignin, isSuccessResponse } from "@react-native-google-signin/google-signin";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { ChefHat, Lock, User } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -22,9 +23,11 @@ import Animated, {
 } from 'react-native-reanimated';
 
 
+
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const { login, isLoading } = useAuth();
   const router = useRouter();
@@ -37,6 +40,40 @@ export default function LoginScreen() {
     formScale.value = withSpring(1);
     formOpacity.value = withTiming(1, { duration: 800 });
   }, []);
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      iosClientId: "340030532252-55ml5mb92msic7i8mlrd25gkpjndef7i.apps.googleusercontent.com",
+      webClientId: "340030532252-2llr8rlanlqr11cuj1m0umh03fn5ouob.apps.googleusercontent.com",
+    })
+  });
+
+  // Test on an actual device
+  const handleGoogleSignIn = async () => {
+    console.log("HITTING THE FUNCTION")
+    try{
+      setIsSubmitting(true);
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      console.log(response);
+
+      if(isSuccessResponse(response)){
+        const { idToken, user } = response.data;
+        const { name, email, photo } = user;
+
+        console.log(response);
+      }
+      else{
+        console.log("WHHYYYYY")
+      }
+      setIsSubmitting(false);
+    } catch(error){
+      setIsSubmitting(false);
+
+    }
+  }
+
+
 
   const animatedFormStyle = useAnimatedStyle(() => {
     return {
@@ -124,7 +161,7 @@ export default function LoginScreen() {
 
           <TouchableOpacity 
             style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
-            onPress={handleLogin}
+            onPress={handleGoogleSignIn}
             disabled={isLoading}
           >
             {isLoading ? (
