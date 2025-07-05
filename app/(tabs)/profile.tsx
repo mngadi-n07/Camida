@@ -26,48 +26,7 @@ export default function ProfileScreen() {
   const router = useRouter();
 
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const fetchData = async () => {
-  //       try {
-            // const url = new URL(`${USER_URL}`);
-    
-            // const response = await fetch(url.toString(), {
-            //   method: "GET",
-            //   headers: {"email":"dwilson@company.net"}
-            // });
-            // const json = await response.json();
-            // let favouritesRecipes = []
-            // if (json.favourites == null){
-            //   setUsername(json.name);
-            //   return;
-            // }
-    
-            // let recipes = json.favourites.split(",");
-            // recipes.map((item) =>{
-            //   const itemProps = item.split(":");
-            //   favouritesRecipes.push({"name" : itemProps[0], "recipe_id":itemProps[1],"image_url":itemProps[2]});
-            // })
-            // setUsername(json.name)
-            // setSavedRecipes(favouritesRecipes)
-            
-            
-  //       } catch (error) {
-  //           console.error('API Error:', error);
-  //       } 
-  //       };
-      
-  //         fetchData();
 
-  //     // Optional: return cleanup function
-  //     return () => {
-        
-  //     };
-  //   }, []) // You can add dependencies here if needed
-  // );
-
-
-  //sdsfsd
   useFocusEffect(
       useCallback(() => {
         loadCards();
@@ -117,7 +76,6 @@ const loadCards = async () => {
 
     }
   };
-  //sdfdsf
 
   
 
@@ -212,8 +170,15 @@ const SuggestionSection = () => {
     setIsSubmitting(true);
     
     // Simulate API call
-    setTimeout(() => {
-      Alert.alert(
+    const url = new URL(`${USER_URL}`);
+    
+    const response = await fetch(url.toString(), {
+      method: "PATCH",
+      headers: {"email":"dwilson@company.net"},
+      body : JSON.stringify({ "suggestion" : suggestion})
+    });
+    await response.json();
+    Alert.alert(
         'Thank You!', 
         'Your suggestion has been submitted successfully. We appreciate your feedback!',
         [
@@ -223,8 +188,9 @@ const SuggestionSection = () => {
           }
         ]
       );
-      setIsSubmitting(false);
-    }, 1500);
+    
+    setIsSubmitting(false);
+    setSuggestion("");
   };
 
   return (

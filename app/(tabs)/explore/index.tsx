@@ -90,7 +90,7 @@ export default function ExploreScreen() {
   
   const handleScroll = (event) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+    const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 30;
     
     if (isCloseToBottom) {
 
@@ -255,7 +255,7 @@ export default function ExploreScreen() {
           <View style={styles.section}>
             <View style={styles.collectionsGrid}>           
               {data.map((collection,index) => {
-                if((index +1) % 10 == 0){
+                if((index +1) % 6 == 0){
                   return renderBanner(collection); 
                   
                 } else {
