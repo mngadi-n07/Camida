@@ -53,7 +53,7 @@ export default function CardsScreen() {
 
       
     } catch (error) {
-      console.error('Error deleting card:', error);
+
     }
     setShowDeleteModal(false);
     loadCards();
@@ -84,7 +84,7 @@ export default function CardsScreen() {
 
 
     } catch (error) {
-      console.error('Error getting cards list:', error);
+
     }
   };
 

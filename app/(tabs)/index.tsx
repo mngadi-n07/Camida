@@ -153,7 +153,7 @@ export default function GroceryScreen() {
             setGroceryItems(JSON.parse(list));
           }
         } catch (error) {
-          console.error('Error loading grocery list:', error);
+
         }
       };
 
@@ -220,7 +220,7 @@ export default function GroceryScreen() {
                 await AsyncStorage.setItem('groceryList', JSON.stringify(updatedItems));
                 setGroceryItems(updatedItems);
               } catch (error) {
-                console.error('Error removing recipe items:', error);
+
                 Alert.alert('Error', 'Failed to remove items');
               }
             },
@@ -229,7 +229,7 @@ export default function GroceryScreen() {
         { cancelable: true }
       );
     } catch (error) {
-      console.error('Error in removeRecipeItems:', error);
+
       Alert.alert('Error', 'An error occurred while removing items');
     }
   };

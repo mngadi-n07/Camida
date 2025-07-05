@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(userData);
       }
     } catch (error) {
-      console.error('Error checking auth state:', error);
+
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       return false;
     } catch (error) {
-      console.error('Login error:', error);
+
       return false;
     } finally {
       setIsLoading(false);
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setUser(null);
     } catch (error) {
-      console.error('Logout error:', error);
+
     }
   };
 

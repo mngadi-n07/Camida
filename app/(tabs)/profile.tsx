@@ -1,12 +1,12 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, FlatList, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LogOut, MessageSquare, Send } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
-import { bucketUrl } from "../../constants"
 import { useAuth } from '@/contexts/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import { LogOut, MessageSquare, Send } from 'lucide-react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, FlatList, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { bucketUrl } from "../../constants";
 
 const DIETARY_PREFERENCES = [
   { id: 'vegetarian', label: 'Vegetarian', icon: '🥬' },
@@ -114,7 +114,7 @@ const loadCards = async () => {
       AsyncStorage.setItem('favourites', JSON.stringify(favouritesRecipes));
 
     } catch (error) {
-      console.error('Error getting cards list:', error);
+
     }
   };
   //sdfdsf

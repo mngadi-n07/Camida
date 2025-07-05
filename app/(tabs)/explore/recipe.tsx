@@ -42,7 +42,7 @@ export default function RecipeScreen() {
             setSelectedRecipe(json);
             setIsFavorite(json.recipe.is_favorite)
         } catch (error) {
-            console.error('API Error:', error);
+
         } finally {
             setLoading(false);
         }
@@ -67,7 +67,7 @@ export default function RecipeScreen() {
         isFavorite ? 'Recipe removed from your favorites' : 'Recipe added to your favorites'
       );
     } catch (error) {
-      console.error('Error updating favorites:', error);
+
       Alert.alert('Error', 'Failed to update favorites');
     }
   };
@@ -82,7 +82,6 @@ export default function RecipeScreen() {
       const existingList = await AsyncStorage.getItem('groceryList');
       let groceryItems = existingList ? JSON.parse(existingList) : [];
 
-       console.log(selectedRecipe.ingredients);
       const newItems = selectedRecipe.ingredients.map(ingredient => ({
         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         name: ingredient.name,
@@ -112,7 +111,7 @@ export default function RecipeScreen() {
       setAddedItems(filteredNewItems);
       setShowConfirmation(true);
     } catch (error) {
-      console.error('Error updating grocery list:', error);
+
       Alert.alert('Error', 'Failed to update grocery list');
     }
   };

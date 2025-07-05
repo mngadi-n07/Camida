@@ -51,9 +51,9 @@ Join our community of developers creating universal apps.
 
 
 
-Logo
+Logo -- it's off center
 Authentication --- who knows
 Ads -- TestIds are in place
 Suggestion
 Recipe Data.
-Ingredient data.
+Ingredient data -- ONecart functionality

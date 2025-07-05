@@ -84,7 +84,7 @@ export default function ExploreScreen() {
 
 
   useEffect(() => {
-    console.log("Used effect")
+
     search("",0);
   }, []);
   
@@ -93,7 +93,7 @@ export default function ExploreScreen() {
     const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
     
     if (isCloseToBottom) {
-      console.log("Is close to bottom")
+
       search(searchQuery,page)
     }
   };
@@ -131,14 +131,9 @@ export default function ExploreScreen() {
       url.searchParams.append("order_by","");
       url.searchParams.append("page",varPage.toString());
 
-      console.log(url.toString())
+
       const response = await fetch(url.toString());
       const newData: SearchResult[] = await response.json(); // Update with your response type
-
-      console.log("currentData:",data);
-      console.log("incomingData:",newData);
-
-      
 
       if (newData.length === 0) {
         setHasMore(false);
@@ -148,7 +143,7 @@ export default function ExploreScreen() {
       }
 
     } catch (error) {
-      console.error('Search error:', error);
+
     }finally {
       setLoading(false);
     }
@@ -163,7 +158,7 @@ export default function ExploreScreen() {
 
   function handleEnter(): void {
     resetPageDependencies()
-    console.log("Search")
+
     search(searchQuery,0)
    
   }
@@ -260,7 +255,7 @@ export default function ExploreScreen() {
           <View style={styles.section}>
             <View style={styles.collectionsGrid}>           
               {data.map((collection,index) => {
-                if((index +1) % 6 == 0){
+                if((index +1) % 10 == 0){
                   return renderBanner(collection); 
                   
                 } else {

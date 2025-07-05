@@ -1,11 +1,10 @@
-import { CameraView, useCameraPermissions,BarcodeScanningResult } from 'expo-camera';
-import React, { useCallback } from 'react';
-import { useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Modal, TextInput, Alert  } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
-import { Check, ChevronDown, Scan, X } from 'lucide-react-native';
 import { shops } from '@/constants';
+import { useFocusEffect } from '@react-navigation/native';
+import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
+import { useRouter } from 'expo-router';
+import { Check, ChevronDown, Scan, X } from 'lucide-react-native';
+import React, { useCallback, useState } from 'react';
+import { Alert, Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const CARD_URL = "https://y37s25brcj.execute-api.eu-north-1.amazonaws.com/default/cards"
 
@@ -65,7 +64,7 @@ export default function Temp() {
 
 
       } catch (error) {
-        console.error('Error adding card:', error);
+
       }
       router.dismissTo("/(tabs)/cards");
     };
