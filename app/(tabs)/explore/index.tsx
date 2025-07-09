@@ -5,6 +5,7 @@ import { ActivityIndicator, Dimensions, Image, Keyboard, Modal, ScrollView, Styl
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuth } from '@/contexts/AuthContext';
 import { bucketUrl } from "../../../constants";
 
 
@@ -72,6 +73,8 @@ export default function ExploreScreen() {
   const [selectedMealType, setSelectedMealType] = useState<string>('all');
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
+  const { user  } = useAuth();
+  
   
 
   const dropdownOptions = [
@@ -132,7 +135,10 @@ export default function ExploreScreen() {
       url.searchParams.append("page",varPage.toString());
 
 
-      const response = await fetch(url.toString());
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {"email":user.email, "Authorization": user.token},
+    });
       const newData: SearchResult[] = await response.json(); // Update with your response type
 
       if (newData.length === 0) {

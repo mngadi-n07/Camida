@@ -1,3 +1,4 @@
+import { useAuth } from '@/contexts/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, Check, Clock, Heart, ListPlus, Star } from 'lucide-react-native';
@@ -22,6 +23,7 @@ export default function RecipeScreen() {
     const [addedItems, setAddedItems] = useState([]);
 
     const [loading, setLoading] = useState(true);
+    const { user  } = useAuth();
 
     useEffect(() => {
         // Fetch data when screen mounts
@@ -34,7 +36,7 @@ export default function RecipeScreen() {
 
             const response = await fetch(url.toString(), {
               method: "GET",
-              headers: {"email":"dwilson@company.net"}
+              headers: {"email":user.email, "Authorization": user.token}
             });
             const json = await response.json();
 
@@ -57,7 +59,7 @@ export default function RecipeScreen() {
         url.searchParams.append("recipe_id",recipeId);
         const response = await fetch(url.toString(), {
         method: "PUT",
-        headers: {"email":"dwilson@company.net"}
+        headers: {"email":user.email, "Authorization": user.token}
       });
 
 

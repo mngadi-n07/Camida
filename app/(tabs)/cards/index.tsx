@@ -1,3 +1,4 @@
+import { useAuth } from '@/contexts/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Plus, Trash2 } from 'lucide-react-native';
@@ -25,6 +26,7 @@ export default function CardsScreen() {
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState({});
+  const { user  } = useAuth();
 
   useFocusEffect(
       useCallback(() => {
@@ -48,7 +50,7 @@ export default function CardsScreen() {
     try {
       const response = await fetch(url.toString(), {
         method: "DELETE",
-        headers: {"email":"dwilson@company.net"}
+        headers: {"email":user.email, "Authorization": user.token}
       });
 
       
@@ -74,7 +76,7 @@ export default function CardsScreen() {
 
       const response = await fetch(CARD_URL, {
         method: "GET",
-        headers: {"email":"dwilson@company.net"}
+        headers: {"email":user.email, "Authorization": user.token}
       });
  
       const json = await response.json();

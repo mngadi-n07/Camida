@@ -1,4 +1,5 @@
 import { shops } from '@/constants';
+import { useAuth } from '@/contexts/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
@@ -16,7 +17,8 @@ export default function Temp() {
   const [manualCode, setManualCode] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
-  const dropdownOptions = Array.from(shops.keys())
+  const dropdownOptions = Array.from(shops.keys());
+  const { user  } = useAuth();
 
 
   useFocusEffect(
@@ -58,7 +60,7 @@ export default function Temp() {
       try {
         const response = await fetch(url.toString(), {
         method: "POST",
-        headers: {"email":"dwilson@company.net"},
+        headers: {"email":user.email, "Authorization": user.token},
         body: JSON.stringify(body),
       });
 

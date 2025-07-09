@@ -21,7 +21,7 @@ export default function ProfileScreen() {
   const [notifications, setNotifications] = useState(true);
   const [mealReminders, setMealReminders] = useState(true);
   const [savedRecipes, setSavedRecipes] = useState([]);
-  const { logout  } = useAuth();
+  const { logout, user  } = useAuth();
   const [username, setUsername] = useState();
   const router = useRouter();
 
@@ -53,7 +53,7 @@ const loadCards = async () => {
     
       const response = await fetch(url.toString(), {
         method: "GET",
-        headers: {"email":"dwilson@company.net"}
+        headers: {"email":user.email, "Authorization": user.token}
       });
       const json = await response.json();
       let favouritesRecipes = []
@@ -113,7 +113,7 @@ const loadCards = async () => {
           <View style={styles.profileHeader}>
 
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>{username}</Text>
+              <Text style={styles.profileName}>{user?.name}</Text>
               
             </View>
             <TouchableOpacity onPress={() => {
@@ -159,6 +159,7 @@ const loadCards = async () => {
 const SuggestionSection = () => {
   const [suggestion, setSuggestion] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const { user  } = useAuth();
   
 
   const handleSubmitSuggestion = async () => {
@@ -174,7 +175,7 @@ const SuggestionSection = () => {
     
     const response = await fetch(url.toString(), {
       method: "PATCH",
-      headers: {"email":"dwilson@company.net"},
+      headers: {"email":user.email, "Authorization": user.token},
       body : JSON.stringify({ "suggestion" : suggestion})
     });
     await response.json();

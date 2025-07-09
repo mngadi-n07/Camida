@@ -52,9 +52,37 @@ Join our community of developers creating universal apps.
 
 
 Logo -- it's off center
-Authentication --- who knows
+Authentication --- who knows It's looking goooodddd
 Ads -- TestIds are in place
-Suggestion
-Recipe Data.
-Ingredient data -- ONecart functionality
+
+Recipe Data. 
+Ingredient data -- ONecart functionality Tumi's API?
+
+Sort & Filter
+
+
 Virtual lists for performance
+
+My Pantry 
+SELECT
+  r.id AS recipe_id,
+  r.name AS recipe_name,
+  COALESCE(SUM(i.cost), 0) AS missing_ingredient_cost
+FROM
+  RecipeTable r
+LEFT JOIN IngredientTable i ON i.recipe_id = r.id
+LEFT JOIN PantryTable p
+  ON p.ingredient_id = i.id AND p.user_id = :user_id
+WHERE
+  p.id IS NULL
+GROUP BY
+  r.id, r.name
+ORDER BY
+  r.id
+LIMIT :limit OFFSET :offset;
+
+
+getRecipes -> for each Recipe, sum the cost of the ingredients are that aren't in Pantry
+https://www.youtube.com/watch?v=PdwYDatvJ2I
+
+implement refresh tokens

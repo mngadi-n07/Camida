@@ -1,16 +1,18 @@
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, isSuccessResponse } from '@react-native-google-signin/google-signin';
 import * as SecureStore from 'expo-secure-store';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 
 interface User {
   id: string;
-  username: string;
+  name: string;
+  token: string;
+  email: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: () => Promise<boolean>;
   logout: () => Promise<void>;
   isLoading: boolean;
 }
@@ -18,13 +20,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_KEY = 'user_auth';
+const Server_URL = "https://y37s25brcj.execute-api.eu-north-1.amazonaws.com/default/users";
 
-// Mock user database - in a real app, this would be an API call
-const MOCK_USERS = [
-  { id: '1', username: 'admin', password: 'admin123' },
-  { id: '2', username: 'user', password: 'password' },
-  { id: '3', username: 'demo', password: 'demo123' },
-];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -57,31 +54,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (): Promise<boolean> => {
     setIsLoading(true);
     
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Check credentials against mock database
-      const foundUser = MOCK_USERS.find(
-        u => u.username === username && u.password === password
-      );
-      
-      if (foundUser) {
-        const userData = { id: foundUser.id, username: foundUser.username };
-        
-        // Store auth data
-        if (Platform.OS === 'web') {
-          localStorage.setItem(AUTH_KEY, JSON.stringify(userData));
-        } else {
+
+        await GoogleSignin.hasPlayServices();
+        await GoogleSignin.signOut();
+        const response = await GoogleSignin.signIn();
+        console.log(response)
+  
+        if(isSuccessResponse(response)){
+          const { idToken, serverAuthCode, user } = response.data;
+          const { name, email, photo } = user;
+
+          const userData = { name : name, email: email, token: idToken }
+          saveUser(email,idToken,name);
+    
           await SecureStore.setItemAsync(AUTH_KEY, JSON.stringify(userData));
+          setUser(userData);
+          return true;
         }
-        
-        setUser(userData);
-        return true;
-      }
       
       return false;
     } catch (error) {
@@ -91,6 +84,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }
   };
+
+  const saveUser = async (email, idToken,name) => {
+
+    try {
+      const url = new URL(`${Server_URL}`);
+      const apiResponse = await fetch(url.toString(), {
+      method: "POST",
+      headers: {"email": email, "Authorization": idToken},
+      body : JSON.stringify({ "name" : name})
+      });
+      await apiResponse.json();
+    } catch (error) {
+      console.log(error);
+    }
+    
+  }
+
 
   const logout = async () => {
     try {

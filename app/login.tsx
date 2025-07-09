@@ -1,8 +1,8 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { GoogleSignin, isSuccessResponse } from "@react-native-google-signin/google-signin";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { ChefHat, Lock, User } from 'lucide-react-native';
+import { ChefHat } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -10,7 +10,6 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
@@ -45,35 +44,23 @@ export default function LoginScreen() {
     GoogleSignin.configure({
       iosClientId: "340030532252-55ml5mb92msic7i8mlrd25gkpjndef7i.apps.googleusercontent.com",
       webClientId: "340030532252-2llr8rlanlqr11cuj1m0umh03fn5ouob.apps.googleusercontent.com",
+      offlineAccess: true,
     })
   });
+  const Server_URL = "https://y37s25brcj.execute-api.eu-north-1.amazonaws.com/default/users";
 
+
+  //  GoogleSignOut
+  //  SignIn
+  //  Send ServerAuthCode to Lambda function
+  //    lambda function
+  /**
+   * lambda function gets refresh token from google and stores it
+   * when token is about to expire, 
+   * 
+   */
+  // 
   // Test on an actual device
-  const handleGoogleSignIn = async () => {
-    console.log("HITTING THE FUNCTION")
-    try{
-      setIsSubmitting(true);
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-      console.log(response);
-
-      if(isSuccessResponse(response)){
-        const { idToken, user } = response.data;
-        const { name, email, photo } = user;
-
-        console.log(response);
-      }
-      else{
-        console.log("WHHYYYYY")
-      }
-      setIsSubmitting(false);
-    } catch(error){
-      setIsSubmitting(false);
-
-    }
-  }
-
-
 
   const animatedFormStyle = useAnimatedStyle(() => {
     return {
@@ -86,19 +73,8 @@ export default function LoginScreen() {
   });
 
   const handleLogin = async () => {
-    if (!username.trim() || !password.trim()) {
-      setError('Please fill in all fields');
-      shakeAnimation.value = withSequence(
-        withTiming(-10, { duration: 50 }),
-        withTiming(10, { duration: 50 }),
-        withTiming(-10, { duration: 50 }),
-        withTiming(0, { duration: 50 })
-      );
-      return;
-    }
-
-    setError('');
-    const success = await login(username, password);
+    
+    const success = await login();
     
     if (success) {
       router.replace('/(tabs)');
@@ -128,34 +104,7 @@ export default function LoginScreen() {
             <Text style={styles.subtitle}>Always know whats for dinner</Text>
           </View>
 
-          <View style={styles.inputContainer}>
-            <View style={styles.inputWrapper}>
-              <User size={20} color="#666" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Username"
-                placeholderTextColor="#666"
-                value={username}
-                onChangeText={setUsername}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
-
-            <View style={styles.inputWrapper}>
-              <Lock size={20} color="#666" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#666"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
-          </View>
+          
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
