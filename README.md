@@ -86,3 +86,8 @@ getRecipes -> for each Recipe, sum the cost of the ingredients are that aren't i
 https://www.youtube.com/watch?v=PdwYDatvJ2I
 
 implement refresh tokens
+Grocery list swiping
+Sign out, clear cards and favourites and grocery list
+data
+CDN
+Brightness

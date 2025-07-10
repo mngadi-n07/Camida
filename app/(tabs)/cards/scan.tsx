@@ -201,12 +201,12 @@ export default function Temp() {
         
         {showDropdown && (
           <View style={styles.dropdownList}>
-            {dropdownOptions.slice(1).map((option, index) => (
+            {dropdownOptions.map((option, index) => (
               <TouchableOpacity
                 key={index}
                 style={[
                   styles.dropdownItem,
-                  index === dropdownOptions.slice(1).length - 1 && styles.dropdownItemLast
+                  index === dropdownOptions.length - 1 && styles.dropdownItemLast
                 ]}
                 onPress={() => {
                   setSelectedOption(option);
