@@ -85,9 +85,13 @@ LIMIT :limit OFFSET :offset;
 getRecipes -> for each Recipe, sum the cost of the ingredients are that aren't in Pantry
 https://www.youtube.com/watch?v=PdwYDatvJ2I
 
-implement refresh tokens
-Grocery list swiping
-Sign out, clear cards and favourites and grocery list
+implement refresh tokens ... - hopefully done
+Grocery list swiping - better but still needs work
+Sign out, clear cards and favourites and grocery list - hopefully done
 data
 CDN
-Brightness
+Brightness - done
+
+sort, filter, reset
+rating, 
+my cards, prevent view 

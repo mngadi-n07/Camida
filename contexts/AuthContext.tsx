@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin, isSuccessResponse } from '@react-native-google-signin/google-signin';
 import * as SecureStore from 'expo-secure-store';
 import React, { createContext, useContext, useEffect, useState } from 'react';
@@ -22,7 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_KEY = 'user_auth';
 const Server_URL = "https://y37s25brcj.execute-api.eu-north-1.amazonaws.com/default/users";
-const refresh_url = "https://1xmkdwpm9a.execute-api.eu-north-1.amazonaws.com/getRefresh";
+const refresh_url = "https://1xmkdwpm9a.execute-api.eu-north-1.amazonaws.com";
 
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -64,7 +65,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await GoogleSignin.hasPlayServices();
         await GoogleSignin.signOut();
         const response = await GoogleSignin.signIn();
-        console.log("New Tokens",response,Date.now().toLocaleString())
   
         if(isSuccessResponse(response)){
           const { idToken, serverAuthCode, user } = response.data;
@@ -99,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       headers: {"email": email, "Authorization": idToken},
       body : JSON.stringify({ "name" : name})
       });
-      console.log(apiResponse)
+
     } catch (error) {
       console.log(error);
     }
@@ -117,7 +117,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       await SecureStore.setItemAsync("refresh_token",  tokens["refresh_token"]);
 
-      console.log("THIS SHOULD BE THE REFRESH TOKEN: ",tokens)
     } catch (error) {
       console.log(error);
     }
@@ -142,7 +141,6 @@ const getValidAccessToken = async (): Promise<string | null> => {
     return accessToken;
   }
 
-  console.log("here")
   if (!refreshToken) return null;
 
   try {
@@ -159,8 +157,8 @@ const getValidAccessToken = async (): Promise<string | null> => {
       return null;
     }
 
-    await SecureStore.setItemAsync('access_token', tokenData.access_token);
-    return tokenData.access_token;
+    await SecureStore.setItemAsync('access_token', tokenData.id_token);
+    return tokenData.id_token;
   } catch (error) {
     console.error('Token refresh error:', error);
     return null;
@@ -184,6 +182,9 @@ const decodeJWT = (token: string): any => {
       } else {
         await GoogleSignin.signOut();
         await SecureStore.deleteItemAsync(AUTH_KEY);
+        await SecureStore.deleteItemAsync("refresh_token");
+        await SecureStore.deleteItemAsync("access_token");
+        await AsyncStorage.clear()
       }
       setUser(null);
     } catch (error) {

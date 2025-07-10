@@ -1,28 +1,19 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import * as Brightness from 'expo-brightness';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
 import { useLocalSearchParams } from 'expo-router';
 import Barcode from 'react-native-barcode-svg';
+import { useScreenBrightness } from '..//../../hooks/useScreenBrightness'; // adjust path as needed
 
 
 
 export default function Card() {
     const { barcode, type, name } = useLocalSearchParams();
-
-    useEffect(() => {
-        const setBrightness = async () => {
-          await Brightness.requestPermissionsAsync();
-          Brightness.setBrightnessAsync(1.0); // Max brightness (1.0 = 100%)
-        };
-    
-        setBrightness();
-      }, []);
-
+    useScreenBrightness(1.0);
     
       return (
         <SafeAreaView style={styles.safeArea}>

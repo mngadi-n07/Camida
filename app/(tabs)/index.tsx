@@ -59,6 +59,8 @@ function SwipeableItem({
   const opacity = useSharedValue(1);
 
   const gesture = Gesture.Pan()
+    .activeOffsetX([-10, 10]) // activates only if horizontal movement is >10px in either direction
+    .failOffsetY([-10, 10])  
     .onUpdate((event) => {
       translateX.value = event.translationX;
     })

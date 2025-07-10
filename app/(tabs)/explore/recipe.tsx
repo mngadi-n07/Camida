@@ -448,7 +448,6 @@ const styles = StyleSheet.create({
     listItemNumber: {
       width: "auto",  /* Button width matches text */
       height: "auto", /* Button height matches text */
-      padding: 8,  
       fontSize: 16,
       fontFamily: 'Inter_600SemiBold',
       color: '#FFF',
