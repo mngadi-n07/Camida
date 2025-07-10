@@ -73,7 +73,7 @@ export default function ExploreScreen() {
   const [selectedMealType, setSelectedMealType] = useState<string>('all');
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
-  const { user  } = useAuth();
+  const { user , getValidAccessToken } = useAuth();
   
   
 
@@ -134,10 +134,11 @@ export default function ExploreScreen() {
       url.searchParams.append("order_by","");
       url.searchParams.append("page",varPage.toString());
 
+      const authToken = await getValidAccessToken();
 
       const response = await fetch(url.toString(), {
         method: "GET",
-        headers: {"email":user.email, "Authorization": user.token},
+        headers: {"email":user.email, "Authorization": authToken},
     });
       const newData: SearchResult[] = await response.json(); // Update with your response type
 

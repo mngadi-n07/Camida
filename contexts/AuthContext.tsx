@@ -15,12 +15,14 @@ interface AuthContextType {
   login: () => Promise<boolean>;
   logout: () => Promise<void>;
   isLoading: boolean;
+  getValidAccessToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_KEY = 'user_auth';
 const Server_URL = "https://y37s25brcj.execute-api.eu-north-1.amazonaws.com/default/users";
+const refresh_url = "https://1xmkdwpm9a.execute-api.eu-north-1.amazonaws.com/getRefresh";
 
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -62,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await GoogleSignin.hasPlayServices();
         await GoogleSignin.signOut();
         const response = await GoogleSignin.signIn();
-        console.log(response)
+        console.log("New Tokens",response,Date.now().toLocaleString())
   
         if(isSuccessResponse(response)){
           const { idToken, serverAuthCode, user } = response.data;
@@ -70,6 +72,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           const userData = { name : name, email: email, token: idToken }
           saveUser(email,idToken,name);
+          getRefreshToken(serverAuthCode);
+  
+          await SecureStore.setItemAsync("access_token", idToken);
     
           await SecureStore.setItemAsync(AUTH_KEY, JSON.stringify(userData));
           setUser(userData);
@@ -94,13 +99,83 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       headers: {"email": email, "Authorization": idToken},
       body : JSON.stringify({ "name" : name})
       });
-      await apiResponse.json();
+      console.log(apiResponse)
     } catch (error) {
       console.log(error);
     }
     
   }
 
+  const getRefreshToken = async (serverAuthCode) => {
+    try {
+      const url = new URL(`${refresh_url}/getRefresh`);
+      const apiResponse = await fetch(url.toString(), {
+      method: "POST",
+      body : JSON.stringify({ "auth_code" : serverAuthCode})
+      });
+      const tokens = await apiResponse.json()
+
+      await SecureStore.setItemAsync("refresh_token",  tokens["refresh_token"]);
+
+      console.log("THIS SHOULD BE THE REFRESH TOKEN: ",tokens)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+// Set 5-minute buffer before expiry
+const TOKEN_EXPIRY_BUFFER_MS = 5 * 60 * 1000;
+
+const getValidAccessToken = async (): Promise<string | null> => {
+  const accessToken = await SecureStore.getItemAsync('access_token');
+  const refreshToken = await SecureStore.getItemAsync('refresh_token');
+
+  if (!accessToken) return null;
+
+  const decoded = decodeJWT(accessToken);
+  const exp = decoded?.exp ? decoded.exp * 1000 : 0; // JWT exp is in seconds
+
+  const now = Date.now();
+  const shouldRefresh = now >= (exp - TOKEN_EXPIRY_BUFFER_MS);
+
+  if (!shouldRefresh) {
+    return accessToken;
+  }
+
+  console.log("here")
+  if (!refreshToken) return null;
+
+  try {
+    const url = new URL(`${refresh_url}/getAccess`);
+    const tokenResponse = await fetch(url.toString(), {
+    method: "POST",
+    body : JSON.stringify({ "refresh_token" : refreshToken})
+    });
+
+    const tokenData = await tokenResponse.json();
+
+    if (!tokenData.access_token) {
+      console.error('Token refresh failed:', tokenData);
+      return null;
+    }
+
+    await SecureStore.setItemAsync('access_token', tokenData.access_token);
+    return tokenData.access_token;
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    return null;
+  }
+};
+
+const decodeJWT = (token: string): any => {
+  try {
+    const payload = token.split('.')[1];
+    const decoded = JSON.parse(atob(payload));
+    return decoded;
+  } catch (err) {
+    return null;
+  }
+};
 
   const logout = async () => {
     try {
@@ -117,7 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading, getValidAccessToken }}>
       {children}
     </AuthContext.Provider>
   );

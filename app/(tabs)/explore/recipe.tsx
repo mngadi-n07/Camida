@@ -23,7 +23,7 @@ export default function RecipeScreen() {
     const [addedItems, setAddedItems] = useState([]);
 
     const [loading, setLoading] = useState(true);
-    const { user  } = useAuth();
+    const { user , getValidAccessToken } = useAuth();
 
     useEffect(() => {
         // Fetch data when screen mounts
@@ -33,10 +33,10 @@ export default function RecipeScreen() {
             url.searchParams.append("recipe_id",recipeId);
             url.searchParams.append("search","recipeId");
 
-
+            const authToken = await getValidAccessToken();
             const response = await fetch(url.toString(), {
               method: "GET",
-              headers: {"email":user.email, "Authorization": user.token}
+              headers: {"email":user.email, "Authorization": authToken}
             });
             const json = await response.json();
 
@@ -57,9 +57,10 @@ export default function RecipeScreen() {
     try {
         const url = new URL(`${USER_URL}`);
         url.searchParams.append("recipe_id",recipeId);
+        const authToken = await getValidAccessToken();
         const response = await fetch(url.toString(), {
         method: "PUT",
-        headers: {"email":user.email, "Authorization": user.token}
+        headers: {"email":user.email, "Authorization": authToken}
       });
 
 

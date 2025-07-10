@@ -26,7 +26,7 @@ export default function CardsScreen() {
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState({});
-  const { user  } = useAuth();
+  const { user, getValidAccessToken  } = useAuth();
 
   useFocusEffect(
       useCallback(() => {
@@ -47,10 +47,12 @@ export default function CardsScreen() {
 
     const url = new URL(`${CARD_URL}`);
     url.searchParams.append("card_id", selectedItem.card_id)
+    const authToken = await getValidAccessToken();
+
     try {
       const response = await fetch(url.toString(), {
         method: "DELETE",
-        headers: {"email":user.email, "Authorization": user.token}
+        headers: {"email":user.email, "Authorization":authToken}
       });
 
       
@@ -74,9 +76,11 @@ export default function CardsScreen() {
       }
       
 
+      const authToken = await getValidAccessToken();
+
       const response = await fetch(CARD_URL, {
         method: "GET",
-        headers: {"email":user.email, "Authorization": user.token}
+        headers: {"email":user.email, "Authorization": authToken}
       });
  
       const json = await response.json();

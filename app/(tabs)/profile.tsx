@@ -21,7 +21,7 @@ export default function ProfileScreen() {
   const [notifications, setNotifications] = useState(true);
   const [mealReminders, setMealReminders] = useState(true);
   const [savedRecipes, setSavedRecipes] = useState([]);
-  const { logout, user  } = useAuth();
+  const { logout, user, getValidAccessToken  } = useAuth();
   const [username, setUsername] = useState();
   const router = useRouter();
 
@@ -50,10 +50,10 @@ const loadCards = async () => {
       
 
       const url = new URL(`${USER_URL}`);
-    
+      const authToken = await getValidAccessToken();
       const response = await fetch(url.toString(), {
         method: "GET",
-        headers: {"email":user.email, "Authorization": user.token}
+        headers: {"email":user.email, "Authorization": authToken}
       });
       const json = await response.json();
       let favouritesRecipes = []
@@ -159,7 +159,7 @@ const loadCards = async () => {
 const SuggestionSection = () => {
   const [suggestion, setSuggestion] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const { user  } = useAuth();
+  const { user, getValidAccessToken  } = useAuth();
   
 
   const handleSubmitSuggestion = async () => {
@@ -172,10 +172,10 @@ const SuggestionSection = () => {
     
     // Simulate API call
     const url = new URL(`${USER_URL}`);
-    
+    const authToken = await getValidAccessToken();
     const response = await fetch(url.toString(), {
       method: "PATCH",
-      headers: {"email":user.email, "Authorization": user.token},
+      headers: {"email":user.email, "Authorization": authToken},
       body : JSON.stringify({ "suggestion" : suggestion})
     });
     await response.json();

@@ -18,7 +18,7 @@ export default function Temp() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const dropdownOptions = Array.from(shops.keys());
-  const { user  } = useAuth();
+  const { user, getValidAccessToken  } = useAuth();
 
 
   useFocusEffect(
@@ -57,10 +57,11 @@ export default function Temp() {
       const url = new URL(`${CARD_URL}`);
       const body = {"card_value": manualCode.trim(), "card_name": selectedOption, "card_format": "CODE128","store_id": 2};
       
+      const authToken = await getValidAccessToken();
       try {
         const response = await fetch(url.toString(), {
         method: "POST",
-        headers: {"email":user.email, "Authorization": user.token},
+        headers: {"email":user.email, "Authorization": authToken},
         body: JSON.stringify(body),
       });
 
