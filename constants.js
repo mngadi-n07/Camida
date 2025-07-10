@@ -14,4 +14,5 @@ export const shops = new Map([
 
 
 export const primaryColor = "#FF7E1D";
-export const secondaryColor = "#FFF8F0"
+export const secondaryColor = "#FFF8F0";
+export const prodUnitId = "ca-app-pub-7842144803620791/8108748209";

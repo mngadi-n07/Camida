@@ -3,10 +3,11 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
 import { useLocalSearchParams } from 'expo-router';
 import Barcode from 'react-native-barcode-svg';
+import { prodUnitId } from '../../../constants';
 import { useScreenBrightness } from '..//../../hooks/useScreenBrightness'; // adjust path as needed
 
 
@@ -35,7 +36,7 @@ export default function Card() {
           </View>
           <View style={styles.adContainer}>
             <BannerAd
-            unitId={TestIds.BANNER}
+            unitId={prodUnitId}
             size={BannerAdSize.BANNER}
             requestOptions={{
               requestNonPersonalizedAdsOnly : true

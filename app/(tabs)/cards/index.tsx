@@ -144,7 +144,7 @@ export default function CardsScreen() {
 
       <View style={styles.adContainer}>
         <BannerAd
-        unitId={TestIds.BANNER}
+        unitId={TestIds.prodUnitId}
         size={BannerAdSize.BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly : true
