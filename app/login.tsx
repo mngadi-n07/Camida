@@ -1,9 +1,8 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { ChefHat } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -40,13 +39,7 @@ export default function LoginScreen() {
     formOpacity.value = withTiming(1, { duration: 800 });
   }, []);
 
-  useEffect(() => {
-    GoogleSignin.configure({
-      iosClientId: "340030532252-55ml5mb92msic7i8mlrd25gkpjndef7i.apps.googleusercontent.com",
-      webClientId: "340030532252-2llr8rlanlqr11cuj1m0umh03fn5ouob.apps.googleusercontent.com",
-      offlineAccess: true,
-    })
-  });
+  
   const Server_URL = "https://y37s25brcj.execute-api.eu-north-1.amazonaws.com/default/users";
 
 

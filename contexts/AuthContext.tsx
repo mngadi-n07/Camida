@@ -30,6 +30,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    GoogleSignin.configure({
+      iosClientId: "340030532252-55ml5mb92msic7i8mlrd25gkpjndef7i.apps.googleusercontent.com",
+      webClientId: "340030532252-2llr8rlanlqr11cuj1m0umh03fn5ouob.apps.googleusercontent.com",
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    })
+  });
+
   // Check for existing auth on app start
   useEffect(() => {
     checkAuthState();
@@ -63,9 +72,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
 
         await GoogleSignin.hasPlayServices();
-        await GoogleSignin.signOut();
+        const signOUt = await GoogleSignin.signOut();
         const response = await GoogleSignin.signIn();
   
+        console.log("Signout:",signOUt);
         if(isSuccessResponse(response)){
           const { idToken, serverAuthCode, user } = response.data;
           const { name, email, photo } = user;
@@ -83,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       return false;
     } catch (error) {
+      console.log("Login()",error);
 
       return false;
     } finally {
@@ -118,7 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await SecureStore.setItemAsync("refresh_token",  tokens["refresh_token"]);
 
     } catch (error) {
-      console.log(error);
+      console.log("GetRefreshToken:",error);
     }
   }
 
