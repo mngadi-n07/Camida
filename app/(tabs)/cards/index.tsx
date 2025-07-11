@@ -4,9 +4,9 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { Plus, Trash2 } from 'lucide-react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { shops } from '../../../constants';
+import { prodUnitId, shops } from '../../../constants';
 
 
 interface LoyaltyCard {
@@ -74,6 +74,7 @@ export default function CardsScreen() {
       if (list) {
         setCards(JSON.parse(list));
       }
+      console.log(prodUnitId)
       
 
       const authToken = await getValidAccessToken();
@@ -144,7 +145,7 @@ export default function CardsScreen() {
 
       <View style={styles.adContainer}>
         <BannerAd
-        unitId={TestIds.prodUnitId}
+        unitId={prodUnitId}
         size={BannerAdSize.BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly : true

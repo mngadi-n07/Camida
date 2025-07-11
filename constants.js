@@ -17,7 +17,7 @@ export const shops = new Map([
 
 export const primaryColor = "#FF7E1D";
 export const secondaryColor = "#FFF8F0";
-export const prodUnitId = __DEV__ ? TestIds : Platform.select({
+export const prodUnitId = __DEV__ ? TestIds.BANNER : Platform.select({
       ios: 'ca-app-pub-7842144803620791/8108748209',
       android: 'ca-app-pub-7842144803620791/5494589930',
     });
