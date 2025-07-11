@@ -3,10 +3,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import mobileAds from 'react-native-google-mobile-ads';
 
 export default function Index() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
+  mobileAds()
+  .initialize();
 
   useEffect(() => {
     if (!isLoading) {

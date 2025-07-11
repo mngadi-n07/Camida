@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+import { TestIds } from 'react-native-google-mobile-ads';
 export const bucketUrl = "https://s3.eu-north-1.amazonaws.com/cami-pic-qn.23/image/"
 
 export const shops = new Map([
@@ -15,4 +17,7 @@ export const shops = new Map([
 
 export const primaryColor = "#FF7E1D";
 export const secondaryColor = "#FFF8F0";
-export const prodUnitId = "ca-app-pub-7842144803620791/8108748209";
+export const prodUnitId = __DEV__ ? TestIds : Platform.select({
+      ios: 'ca-app-pub-7842144803620791/8108748209',
+      android: 'ca-app-pub-7842144803620791/5494589930',
+    });
