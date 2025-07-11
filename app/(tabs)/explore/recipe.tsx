@@ -4,9 +4,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, Check, Clock, Heart, ListPlus, Star } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+// import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { bucketUrl, prodUnitId } from "../../../constants";
+import { bucketUrl } from "../../../constants";
 
 
 const RECIPE_URL = "https://y37s25brcj.execute-api.eu-north-1.amazonaws.com/default/recipe";
@@ -202,13 +202,13 @@ export default function RecipeScreen() {
                   </View>
                 ))}
               </View>
-              <BannerAd
+              {/* <BannerAd
                 unitId={prodUnitId}
                 size={BannerAdSize.BANNER}
                 requestOptions={{
                   requestNonPersonalizedAdsOnly: true
                 }}
-              />
+              /> */}
     
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Instructions</Text>

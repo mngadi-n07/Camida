@@ -2,11 +2,11 @@ import { useRouter } from 'expo-router';
 import { Check, ChefHat, ChevronDown, Search, SlidersHorizontal, Star, X } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, Image, Keyboard, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+// import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { bucketUrl, prodUnitId } from "../../../constants";
+import { bucketUrl } from "../../../constants";
 
 
 
@@ -193,13 +193,13 @@ export default function ExploreScreen() {
     const renderBanner = (recipe) => (
       <>
       {renderRecipeCard(recipe)}
-      <BannerAd
+      {/* <BannerAd
         unitId={prodUnitId}
         size={BannerAdSize.BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly: true
         }}
-      />
+      /> */}
   </>
       
     )

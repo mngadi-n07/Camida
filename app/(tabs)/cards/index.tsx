@@ -4,7 +4,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { Plus, Trash2 } from 'lucide-react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+// import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { prodUnitId, shops } from '../../../constants';
 
@@ -143,7 +143,7 @@ export default function CardsScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.adContainer}>
+      {/* <View style={styles.adContainer}>
         <BannerAd
         unitId={prodUnitId}
         size={BannerAdSize.BANNER}
@@ -152,7 +152,7 @@ export default function CardsScreen() {
         }}
       />
 
-      </View>
+      </View> */}
         
       
 
