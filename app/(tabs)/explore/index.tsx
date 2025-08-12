@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { Check, ChefHat, ChevronDown, Search, SlidersHorizontal, Star, X } from 'lucide-react-native';
+import { Check, ChefHat, ChevronDown, Plus, Search, SlidersHorizontal, X } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, Image, Keyboard, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 // import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
@@ -13,7 +13,7 @@ import { bucketUrl } from "../../../constants";
 const { width } = Dimensions.get('window');
 const COLLECTION_CARD_WIDTH = (width - 48) / 2;
 const RECIPE_URL = "https://y37s25brcj.execute-api.eu-north-1.amazonaws.com/default/recipe";
-
+const EXTRACTOR_URL = "https://buihjf06p7.execute-api.eu-north-1.amazonaws.com";
 const cardWidth = (width - 60) / 2;
 
 
@@ -57,6 +57,8 @@ export default function ExploreScreen() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [basicModalVisible, setBasicModalVisible] = useState(false);
+  const [tiktokUrl,setTikTokUrl] = useState("")
 
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showSortModal, setShowSortModal] = useState(false);
@@ -145,7 +147,7 @@ export default function ExploreScreen() {
       if (newData.length === 0) {
         setHasMore(false);
       } else {
-        setData(prevData => [...prevData, ...newData]);
+        // setData(prevData => [...prevData, ...newData]);
         setPage(varPage + 1);
       }
 
@@ -169,7 +171,77 @@ export default function ExploreScreen() {
     search(searchQuery,0)
    
   }
-    const renderRecipeCard = (recipe) => (
+
+  const sendRecipe = async () => {
+    const recipeId = await waitForRecipe();
+    const recipe = {"recipe_id":recipeId}
+
+    handleRecipePress(recipe)
+  }
+
+  async function pollUntilComplete(video_id, maxRetries = 5, delay = 1000) {
+    let retries = maxRetries;
+
+    while (retries > 0) {
+      console.log(`${retries}...`);
+      try {
+        const extractUrl = new URL(`${EXTRACTOR_URL}/poll_recipe`);
+        extractUrl.searchParams.append("video_id",video_id);
+        
+        const res = await fetch(extractUrl);
+        const data = await res.json();
+
+        if (data.status === "COMPLETE") {
+          return data; // ✅ Return full body when complete
+        }
+
+      } catch (err) {
+        console.error("Request failed:", err);
+      }
+
+      retries--;
+      await new Promise(r => setTimeout(r, delay)); // wait before retry
+    }
+
+    throw new Error("Max retries reached without COMPLETE status");
+  }
+
+
+  const waitForRecipe = async () => {
+    console.log("Waiting for recipe")
+    setLoading(true)
+
+    const extractUrl = new URL(`${EXTRACTOR_URL}/send_recipe`);
+    extractUrl.searchParams.append("tiktokUrl",tiktokUrl);
+
+    const response = await fetch(extractUrl.toString(), {
+        method: "GET",
+        headers: {"email":user.email, "Authorization": authToken},
+    });
+
+    const isReady = await pollUntilComplete(response.data.video_id)
+
+
+
+
+    setLoading(false)
+    console.log("Done for recipe")
+
+
+  }
+
+  const submitRecipe = () => {
+    sendRecipe()
+    setBasicModalVisible(false)
+    setTikTokUrl("")
+
+  }
+
+  
+
+    
+
+  const renderRecipeCard = (recipe) => (
     <TouchableOpacity 
       key={recipe.id} 
       style={styles2.recipeCard}
@@ -179,13 +251,13 @@ export default function ExploreScreen() {
       <Image source={{ uri: bucketUrl + recipe.image_url }} style={styles3.recipeImage} />
       <View style={styles3.recipeContent}>
         <Text style={styles3.recipeName} numberOfLines={2}>{recipe.name}</Text>
-        <View style={styles3.recipeRating}>
+        {/* <View style={styles3.recipeRating}>
           <Star size={14} color="#f97316" fill="#f97316" />
           <Text style={styles3.ratingText}>{recipe.rating}</Text>
           <Text style={styles3.reviewsText}>{recipe.reviews}</Text>
-        </View>
+        </View> */}
 
-        <Text style={styles3.recipePrice}>R{recipe.price.toFixed(2)}</Text>
+        {/* <Text style={styles3.recipePrice}>R{recipe.price.toFixed(2)}</Text> */}
       </View>
     </TouchableOpacity>
   );
@@ -251,9 +323,19 @@ export default function ExploreScreen() {
               onPress={() => setShowFilterModal(true)}>
               <SlidersHorizontal size={20} color="#f97316" />
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.sortButton}
+              onPress={() => setBasicModalVisible(true)}>
+              <Plus size={20} color="#f97316" />
+            </TouchableOpacity>
          
         </View>
       </View>
+      {loading ? (
+                <View style={styles.loader}>
+                  <ActivityIndicator size="large" color={"#f97316"} />
+                </View>
+              ) : null}
 
 
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} onScroll={handleScroll}
@@ -261,14 +343,14 @@ export default function ExploreScreen() {
 
           <View style={styles.section}>
             <View style={styles.collectionsGrid}>           
-              {data.map((collection,index) => {
+              {/* {data.map((collection,index) => {
                 if((index +1) % 6 == 0){
                   return renderBanner(collection); 
                   
                 } else {
                   return renderRecipeCard(collection)
                 }
-              })}
+              })} */}
               {loading && (
                 <View style={styles.loader}>
                   <ActivityIndicator size="large" color={"#f97316"} />
@@ -500,6 +582,50 @@ export default function ExploreScreen() {
                 </TouchableOpacity>
               ))}
             </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={basicModalVisible}
+        onRequestClose={() => setBasicModalVisible(false)}>
+        <View style={styles4.modalOverlay}>
+          <View style={styles4.modalContent}>
+            <View style={styles4.modalHeader}>
+              <Text style={styles4.modalTitle}>Add Recipe</Text>
+              <TouchableOpacity
+                onPress={() => setBasicModalVisible(false)}
+                style={styles4.closeButton}>
+                <X size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles4.modalText}>
+              Add recipes through TIKTOK link 
+            </Text>
+            <TextInput
+              style={styles4.searchInput}
+              placeholder="Search recipes..."
+              onChangeText={text => {      
+                setTikTokUrl(text)
+              }}
+              value={tiktokUrl}
+             
+              
+              onSubmitEditing={() => {
+                submitRecipe()
+              }}
+            />
+            <Text style={styles4.modalText}>
+             (Sharing directly through app coming soon)
+            </Text>
+            <TouchableOpacity
+              style={styles4.primaryButton}
+              onPress={() => {
+                submitRecipe()
+                }}>
+              <Text style={styles4.primaryButtonText}>Add recipe</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -1474,5 +1600,323 @@ const styles3 = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#fff',
+  },
+});
+
+const styles4 = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F2F2F7',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  searchInput: {
+    borderWidth: .5,
+    borderColor: '#f97316',
+    height : 50,
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 12
+  },
+  header: {
+    padding: 24,
+    paddingTop: 16,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#1C1C1E',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#8E8E93',
+    lineHeight: 22,
+  },
+  section: {
+    paddingHorizontal: 24,
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#1C1C1E',
+    marginBottom: 16,
+  },
+  modalButton: {
+    marginBottom: 12,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+  },
+  modalButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 24,
+    width: '100%',
+    maxWidth: 340,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#1C1C1E',
+  },
+  closeButton: {
+    padding: 4,
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#3C3C43',
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  primaryButton: {
+    backgroundColor: '#f97316',
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  primaryButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondaryButton: {
+    backgroundColor: '#F2F2F7',
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
+  },
+  secondaryButtonText: {
+    color: '#007AFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  fullScreenModal: {
+    flex: 1,
+    backgroundColor: '#F2F2F7',
+  },
+  fullScreenHeader: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5EA',
+  },
+  fullScreenCloseButton: {
+    padding: 8,
+  },
+  fullScreenCloseText: {
+    color: '#007AFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  fullScreenContent: {
+    flex: 1,
+    padding: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullScreenTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1C1C1E',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  fullScreenText: {
+    fontSize: 16,
+    color: '#3C3C43',
+    lineHeight: 22,
+    textAlign: 'center',
+    maxWidth: 300,
+  },
+  slideModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  slideModalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 24,
+    minHeight: 300,
+  },
+  modalHandle: {
+    width: 36,
+    height: 4,
+    backgroundColor: '#C7C7CC',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  slideModalTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1C1C1E',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  fadeModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  fadeModalContent: {
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 32,
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 300,
+  },
+  fadeModalTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1C1C1E',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  fadeModalText: {
+    fontSize: 16,
+    color: '#3C3C43',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  bottomSheetOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  bottomSheetContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  bottomSheetHeader: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5EA',
+  },
+  bottomSheetTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1C1C1E',
+    textAlign: 'center',
+  },
+  bottomSheetOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5EA',
+  },
+  bottomSheetOptionText: {
+    fontSize: 16,
+    color: '#007AFF',
+    marginLeft: 12,
+  },
+  destructiveOption: {
+    borderBottomWidth: 0,
+  },
+  destructiveText: {
+    color: '#FF3B30',
+  },
+  bottomSheetCancel: {
+    padding: 20,
+    backgroundColor: '#F2F2F7',
+    borderTopWidth: 8,
+    borderTopColor: '#E5E5EA',
+  },
+  bottomSheetCancelText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#8E8E93',
+    textAlign: 'center',
+  },
+  customOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  customOverlayContent: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 32,
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 320,
+  },
+  customOverlayIcon: {
+    width: 64,
+    height: 64,
+    backgroundColor: '#34C759',
+    borderRadius: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  customOverlayTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1C1C1E',
+    marginBottom: 12,
+  },
+  customOverlayText: {
+    fontSize: 16,
+    color: '#3C3C43',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 32,
+  },
+  customOverlayButtons: {
+    flexDirection: 'row',
+    width: '100%',
   },
 });

@@ -1,7 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ArrowLeft, Check, Clock, Heart, ListPlus, Star } from 'lucide-react-native';
+import { ArrowLeft, Check, Clock, Heart, ListPlus } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
@@ -164,24 +164,25 @@ export default function RecipeScreen() {
                 </View>
               )} */}
               
-              <View style={styles.metaInfo}>
-                <View style={styles.metaItem}>
+              <View style={styles.metaItem}>
                   <Clock size={20} color="#f97316" />
                   <Text style={styles.metaText}>{selectedRecipe.recipe.cook_time}mins</Text>
                 </View>
+              {/* <View style={styles.metaInfo}> */}
+                
                 {/* <View style={styles.metaItem}>
                   <Users size={20} color="#8E8E93" />
                   <Text style={styles.metaText}>Serves {selectedRecipe.servings}</Text>
                 </View> */}
-                <View style={styles.metaItem}>
+                {/* <View style={styles.metaItem}>
                   
                   <Text style={styles.metaText}>R{selectedRecipe.recipe.price}</Text>
                 </View>
                 <View style={styles.metaItem}>
                   <Star size={14} color="#f97316" />
                   <Text style={styles.metaText}>{selectedRecipe.recipe.rating}</Text>
-                </View>
-              </View>
+                </View> */}
+              {/* </View> */}
     
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
