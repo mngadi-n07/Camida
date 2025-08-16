@@ -56,7 +56,7 @@ export default function Temp() {
   const submitNewCard = async () => {
 
       const url = new URL(`${CARD_URL}`);
-      const body = {"card_value": manualCode.trim(), "card_name": selectedOption, "card_format": "CODE128","store_id": 2};
+      const body = {"card_value": manualCode.trim(), "card_name": selectedOption, "card_format": "CODE128","store_id": 1};
 
       
       const authToken = await getValidAccessToken();
