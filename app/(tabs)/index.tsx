@@ -122,7 +122,7 @@ function SwipeableItem({
 
           {productInfo && (
             <Text style={styles.priceText}>
-              R{productInfo.price.toFixed(2)}
+              {/* R{productInfo.price.toFixed(2)} */}
             </Text>
           )}
         </Animated.View>
@@ -142,7 +142,7 @@ export default function GroceryScreen() {
     for (let item of groceryItems) {
       sum += item.price;
     }
-    setGrandTotal(sum.toFixed(2))
+    // setGrandTotal(sum.toFixed(2))
   },[groceryItems])
 
 
@@ -299,7 +299,7 @@ export default function GroceryScreen() {
               <View style={styles.recipeTotalContainer}>
                 <View style={styles.recipeTotalInner}>
                   <Text style={styles.recipeTotalText}>
-                    Recipe Total: R{calculateTotalPrice(items as GroceryItem[]).toFixed(2)}
+                    {/* Recipe Total: R{calculateTotalPrice(items as GroceryItem[]).toFixed(2)} */}
                   </Text>
                 </View>
               </View>

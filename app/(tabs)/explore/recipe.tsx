@@ -25,24 +25,49 @@ export default function RecipeScreen() {
     const [loading, setLoading] = useState(true);
     const { user , getValidAccessToken } = useAuth();
 
+
+  async function pollUntilComplete(maxRetries = 10, delay = 3000) {
+    let retries = maxRetries;
+
+    while (retries > 0) {
+      console.log(`${retries}...`);
+      try {
+        const url = new URL(`${RECIPE_URL}`);
+        url.searchParams.append("recipe_id",recipeId);
+        url.searchParams.append("search","recipeId");
+
+        console.log(url)
+        const authToken = await getValidAccessToken();
+        const response = await fetch(url.toString(), {
+          method: "GET",
+          headers: {"email":user.email, "Authorization": authToken}
+        });
+        const json = await response.json();
+        console.log("New Recipe:",json)
+
+        
+        setSelectedRecipe(json);
+        setIsFavorite(json.recipe.is_favorite)
+        break;
+
+      } catch (err) {
+        console.error("Request failed:", err);
+        retries++;
+      }
+
+      retries--;
+      await new Promise(r => setTimeout(r, delay)); // wait before retry
+    }
+
+    throw new Error("Max retries reached without COMPLETE status");
+  }
+
     useEffect(() => {
         // Fetch data when screen mounts
         const fetchData = async () => {
         try {
-            const url = new URL(`${RECIPE_URL}`);
-            url.searchParams.append("recipe_id",recipeId);
-            url.searchParams.append("search","recipeId");
-
-            const authToken = await getValidAccessToken();
-            const response = await fetch(url.toString(), {
-              method: "GET",
-              headers: {"email":user.email, "Authorization": authToken}
-            });
-            const json = await response.json();
-
+          await pollUntilComplete()
             
-            setSelectedRecipe(json);
-            setIsFavorite(json.recipe.is_favorite)
         } catch (error) {
 
         } finally {
@@ -131,7 +156,7 @@ export default function RecipeScreen() {
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
           <ScrollView style={styles.scrollView}>
-            <Image source={{ uri: bucketUrl + selectedRecipe.recipe.image_url}} style={styles.coverImage} />
+            <Image source={{ uri: bucketUrl + recipeId + ".jpg"}} style={styles.coverImage} />
             
             <View style={styles.headerButtons}>
               <TouchableOpacity

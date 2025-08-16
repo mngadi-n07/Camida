@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { prodUnitId, shops } from '../../../constants';
+import { shops } from '../../../constants';
 
 
 interface LoyaltyCard {
@@ -74,7 +74,6 @@ export default function CardsScreen() {
       if (list) {
         setCards(JSON.parse(list));
       }
-      console.log(prodUnitId)
       
 
       const authToken = await getValidAccessToken();
@@ -85,6 +84,7 @@ export default function CardsScreen() {
       });
  
       const json = await response.json();
+      console.log(json)
 
       setCards(json);
       AsyncStorage.setItem('cardList', JSON.stringify(json));

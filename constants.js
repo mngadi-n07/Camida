@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 import { TestIds } from 'react-native-google-mobile-ads';
-export const bucketUrl = "https://s3.eu-north-1.amazonaws.com/cami-pic-qn.23/image/"
+export const bucketUrl = "https://camida-recipe-images.s3.af-south-1.amazonaws.com/"
 
 export const shops = new Map([
     ["Checkers",require("./assets/images/Checkers.jpg")],

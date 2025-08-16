@@ -56,6 +56,7 @@ const loadCards = async () => {
         headers: {"email":user.email, "Authorization": authToken}
       });
       const json = await response.json();
+      
       let favouritesRecipes = []
       if (json.favourites == null){
         setUsername(json.name);
@@ -65,7 +66,7 @@ const loadCards = async () => {
       let recipes = json.favourites.split(",");
       recipes.map((item) =>{
         const itemProps = item.split(":");
-        favouritesRecipes.push({"name" : itemProps[0], "recipe_id":itemProps[1],"image_url":itemProps[2]});
+        favouritesRecipes.push({"name" : itemProps[0], "recipe_id":itemProps[1]});
       })
       setUsername(json.name)
       setSavedRecipes(favouritesRecipes)
@@ -92,7 +93,7 @@ const loadCards = async () => {
           });
         
       }}>
-      <Image source={{ uri: bucketUrl + item.image_url}} style={styles.recipeImage} />
+      <Image source={{ uri: bucketUrl + item.recipe_id + ".jpg"}} style={styles.recipeImage} />
       <View style={styles.recipeOverlay}>
         <View style={styles.recipeContent}>
           <Text style={styles.recipeTitle}>{item.name}</Text>

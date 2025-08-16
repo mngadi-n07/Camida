@@ -54,19 +54,25 @@ export default function Temp() {
 
   
   const submitNewCard = async () => {
+
       const url = new URL(`${CARD_URL}`);
       const body = {"card_value": manualCode.trim(), "card_name": selectedOption, "card_format": "CODE128","store_id": 2};
+
       
       const authToken = await getValidAccessToken();
+      console.log("Adding card",manualCode.trim(), selectedOption)
       try {
         const response = await fetch(url.toString(), {
         method: "POST",
         headers: {"email":user.email, "Authorization": authToken},
         body: JSON.stringify(body),
       });
+      const data = await response.json()
+
 
 
       } catch (error) {
+        console.log("But why",error)
 
       }
       router.dismissTo("/(tabs)/cards");
@@ -81,6 +87,8 @@ export default function Temp() {
 
   const handleManualCodeSubmit = () => {
     if (manualCode.trim()) {
+      console.log("Submitting card")
+      submitNewCard()
       Alert.alert(
         'Code Added',
         `Rewards card code: ${manualCode.trim()}`,
@@ -88,7 +96,6 @@ export default function Temp() {
       );
       // setManualCode('');
       // setShowManualEntry(false);
-      submitNewCard()
     }
     router.dismissTo("/(tabs)/cards");
   };

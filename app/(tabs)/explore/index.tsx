@@ -103,11 +103,11 @@ export default function ExploreScreen() {
     }
   };
 
-  const handleRecipePress = (recipe: any) => {
+  const handleRecipePress = (recipeID: any) => {
     router.push({
       pathname: '/explore/recipe',
       params: { 
-        recipeId: recipe.recipe_id,
+        recipeId: recipeID,
         back: "/(tabs)/explore"
       }
     });
@@ -143,11 +143,12 @@ export default function ExploreScreen() {
         headers: {"email":user.email, "Authorization": authToken},
     });
       const newData: SearchResult[] = await response.json(); // Update with your response type
+      console.log(newData)
 
       if (newData.length === 0) {
         setHasMore(false);
       } else {
-        // setData(prevData => [...prevData, ...newData]);
+        setData(prevData => [...prevData, ...newData]);
         setPage(varPage + 1);
       }
 
@@ -173,26 +174,36 @@ export default function ExploreScreen() {
   }
 
   const sendRecipe = async () => {
-    const recipeId = await waitForRecipe();
-    const recipe = {"recipe_id":recipeId}
+    console.log("Sending recipe:",tiktokUrl);
 
-    handleRecipePress(recipe)
+    const recipeId = await waitForRecipe();
+
+    console.log(recipeId)
+    handleRecipePress(recipeId)
   }
 
-  async function pollUntilComplete(video_id, maxRetries = 5, delay = 1000) {
+  async function pollUntilComplete(video_id, maxRetries = 5, delay = 4000) {
     let retries = maxRetries;
-
+    let complete = false;
     while (retries > 0) {
       console.log(`${retries}...`);
       try {
         const extractUrl = new URL(`${EXTRACTOR_URL}/poll_recipe`);
         extractUrl.searchParams.append("video_id",video_id);
-        
+
         const res = await fetch(extractUrl);
         const data = await res.json();
+        console.log(data);
 
-        if (data.status === "COMPLETE") {
-          return data; // ✅ Return full body when complete
+        if (data["status"] === "COMPLETED") {
+          console.log("complete")
+          complete = true;
+          break;
+        }
+
+        if(data["status"] === "IN_PROGRESS"){
+          console.log("Waiting")
+          retries++;
         }
 
       } catch (err) {
@@ -202,8 +213,9 @@ export default function ExploreScreen() {
       retries--;
       await new Promise(r => setTimeout(r, delay)); // wait before retry
     }
+    return complete;
 
-    throw new Error("Max retries reached without COMPLETE status");
+    // throw new Error("Max retries reached without COMPLETE status");
   }
 
 
@@ -211,23 +223,27 @@ export default function ExploreScreen() {
     console.log("Waiting for recipe")
     setLoading(true)
 
-    const extractUrl = new URL(`${EXTRACTOR_URL}/send_recipe`);
-    extractUrl.searchParams.append("tiktokUrl",tiktokUrl);
 
-    const response = await fetch(extractUrl.toString(), {
-        method: "GET",
-        headers: {"email":user.email, "Authorization": authToken},
+    // Check for tikTokUrl
+    const url = `https://buihjf06p7.execute-api.eu-north-1.amazonaws.com/send_recipe?tiktokUrl=${encodeURIComponent(tiktokUrl)}`;
+   
+    console.log(url)
+    const response = await fetch(url, {
+        method: "POST",
+        // headers: {"email":user.email, "Authorization": authToken, "Content-Type": "application/json"},
+        // enable headers on the API Gateway if need be
     });
+    const data = await response.json()
+    console.log("Response:",data);
+    console.log("video :",data.video_id);
 
-    const isReady = await pollUntilComplete(response.data.video_id)
 
-
-
+    const isReady = await pollUntilComplete(data.video_id)
+    console.log(isReady)
 
     setLoading(false)
     console.log("Done for recipe")
-
-
+    return data.video_id;
   }
 
   const submitRecipe = () => {
@@ -243,12 +259,12 @@ export default function ExploreScreen() {
 
   const renderRecipeCard = (recipe) => (
     <TouchableOpacity 
-      key={recipe.id} 
+      key={recipe.recipe_id} 
       style={styles2.recipeCard}
-      onPress={() => handleRecipePress(recipe)}
+      onPress={() => handleRecipePress(recipe.recipe_id)}
     
     >
-      <Image source={{ uri: bucketUrl + recipe.image_url }} style={styles3.recipeImage} />
+      <Image source={{ uri: bucketUrl + recipe.recipe_id + ".jpg" }} style={styles3.recipeImage} />
       <View style={styles3.recipeContent}>
         <Text style={styles3.recipeName} numberOfLines={2}>{recipe.name}</Text>
         {/* <View style={styles3.recipeRating}>
@@ -343,14 +359,14 @@ export default function ExploreScreen() {
 
           <View style={styles.section}>
             <View style={styles.collectionsGrid}>           
-              {/* {data.map((collection,index) => {
+              {data.map((collection,index) => {
                 if((index +1) % 6 == 0){
                   return renderBanner(collection); 
                   
                 } else {
                   return renderRecipeCard(collection)
                 }
-              })} */}
+              })}
               {loading && (
                 <View style={styles.loader}>
                   <ActivityIndicator size="large" color={"#f97316"} />
@@ -605,7 +621,7 @@ export default function ExploreScreen() {
             </Text>
             <TextInput
               style={styles4.searchInput}
-              placeholder="Search recipes..."
+              placeholder="Tiktok url ..."
               onChangeText={text => {      
                 setTikTokUrl(text)
               }}
