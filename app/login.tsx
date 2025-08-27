@@ -15,7 +15,6 @@ import {
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSequence,
   withSpring,
   withTiming
 } from 'react-native-reanimated';
@@ -67,19 +66,20 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     
-    const success = await login();
+    router.replace('/(tabs)');
+    // const success = await login();
     
-    if (success) {
-      router.replace('/(tabs)');
-    } else {
-      setError('Invalid username or password');
-      shakeAnimation.value = withSequence(
-        withTiming(-10, { duration: 50 }),
-        withTiming(10, { duration: 50 }),
-        withTiming(-10, { duration: 50 }),
-        withTiming(0, { duration: 50 })
-      );
-    }
+    // if (success) {
+      
+    // } else {
+    //   setError('Invalid username or password');
+    //   shakeAnimation.value = withSequence(
+    //     withTiming(-10, { duration: 50 }),
+    //     withTiming(10, { duration: 50 }),
+    //     withTiming(-10, { duration: 50 }),
+    //     withTiming(0, { duration: 50 })
+    //   );
+    // }
   };
 
   return (
