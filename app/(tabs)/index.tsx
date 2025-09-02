@@ -120,9 +120,10 @@ function SwipeableItem({
             )}
           </View>
 
+
           {productInfo && (
             <Text style={styles.priceText}>
-              {/* R{productInfo.price.toFixed(2)} */}
+              {/* R{productInfo.price.toFixed(2)} this is weird */}
             </Text>
           )}
         </Animated.View>
