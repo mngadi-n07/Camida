@@ -17,6 +17,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   isLoading: boolean;
   getValidAccessToken: () => Promise<string | null>;
+  getPnpAccessToken?: () => Promise<string | null>;
+  setPnpAccessToken?: (token: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -176,6 +178,16 @@ const getValidAccessToken = async (): Promise<string | null> => {
   }
 };
 
+const getPnpAccessToken = async (): Promise<string | null> => {
+  const accessToken = await SecureStore.getItemAsync('pnp_token');
+  console.log("PNP Token:",accessToken);
+  return accessToken;
+}
+
+const setPnpAccessToken = async (token: string) => {
+  await SecureStore.setItem('pnp_token',token);
+}
+
 const decodeJWT = (token: string): any => {
   try {
     const payload = token.split('.')[1];
@@ -204,7 +216,7 @@ const decodeJWT = (token: string): any => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading, getValidAccessToken }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading, getValidAccessToken, setPnpAccessToken, getPnpAccessToken }}>
       {children}
     </AuthContext.Provider>
   );

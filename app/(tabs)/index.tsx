@@ -301,6 +301,7 @@ export default function GroceryScreen() {
                 <View style={styles.recipeTotalInner}>
                   <Text style={styles.recipeTotalText}>
                     {/* Recipe Total: R{calculateTotalPrice(items as GroceryItem[]).toFixed(2)} */}
+                    Recipe Total: R0.00
                   </Text>
                 </View>
               </View>
