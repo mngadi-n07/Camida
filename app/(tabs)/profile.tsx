@@ -117,6 +117,20 @@ const loadCards = async () => {
      closeModal();
      
   }
+
+  const signOutIn = () => {
+    if (isSignedIn){
+      console.log("Signing out");
+      setPnpAccessToken("");
+      setIsSignedIn(false);
+      Alert.alert('Connected', 'Your Pick n Pay account has been disconnected successfully.');
+      return
+    } else {
+      setBasicModalVisible(true);
+    }
+  
+  }
+
   
 
   const renderRecipeCard = ({ item }) => (
@@ -188,7 +202,7 @@ const loadCards = async () => {
       <View style={styles.section}>
         <TouchableOpacity
         style={styles2.pnpButton}
-         onPress={() => setBasicModalVisible(true)}>
+         onPress={() => signOutIn()}>
         <Send size={18} color="#fff" style={styles2.submitIcon} />
         <Text style={styles2.submitButtonText}>
           {isSignedIn ? "Sign out" : "Log into Pick n Pay"  }
